@@ -1,47 +1,39 @@
 #!/bin/bash
 
 cd ../../
-mkdir -p gui/deploy
+mkdir -p deploy
 
 set -e
 
-version="0.6.4"
+version="0.6.7"
 
-mvn clean package verify -DskipTests -Dmaven.javadoc.skip=true
+./gradlew build
 
-linux32=/Users/dev/vm_shared_ubuntu14_32bit
-linux64=/Users/dev/vm_shared_ubuntu
-win32=/Users/dev/vm_shared_windows_32bit
-win64=/Users/dev/vm_shared_windows
+linux32=build/vm/vm_shared_ubuntu14_32bit
+linux64=build/vm/vm_shared_ubuntu
+win32=build/vm/vm_shared_windows_32bit
+win64=build/vm/vm_shared_windows
 
-cp gui/target/shaded.jar "gui/deploy/Bisq-$version.jar"
+mkdir -p $linux32 $linux64 $win32 $win64
+
+cp build/libs/bisq-desktop.jar "deploy/Bisq-$version.jar"
 
 # copy app jar to VM shared folders
-cp gui/target/shaded.jar "$linux32/Bisq-$version.jar"
-cp gui/target/shaded.jar "$linux64/Bisq-$version.jar"
+cp build/libs/bisq-desktop.jar "$linux32/Bisq-$version.jar"
+cp build/libs/bisq-desktop.jar "$linux64/Bisq-$version.jar"
 # At windows we don't add the version nr as it would keep multiple versions of jar files in app dir
-cp gui/target/shaded.jar "$win32/Bisq.jar"
-cp gui/target/shaded.jar "$win64/Bisq.jar"
+cp build/libs/bisq-desktop.jar "$win32/Bisq.jar"
+cp build/libs/bisq-desktop.jar "$win64/Bisq.jar"
 
-# copy bouncycastle jars to VM shared folders
-lib1=bcpg-jdk15on.jar
-cp gui/target/lib/$lib1 "$linux32/$lib1"
-cp gui/target/lib/$lib1 "$linux64/$lib1"
-cp gui/target/lib/$lib1 "$win32/$lib1"
-cp gui/target/lib/$lib1 "$win64/$lib1"
-
-lib2=bcprov-jdk15on.jar
-cp gui/target/lib/$lib2 "$linux32/$lib2"
-cp gui/target/lib/$lib2 "$linux64/$lib2"
-cp gui/target/lib/$lib2 "$win32/$lib2"
-cp gui/target/lib/$lib2 "$win64/$lib2"
-
+if [ -z "$JAVA_HOME" ]; then
+    JAVA_HOME=$(/usr/libexec/java_home)
+fi
 
 echo "Using JAVA_HOME: $JAVA_HOME"
 $JAVA_HOME/bin/javapackager \
     -deploy \
     -BappVersion=$version \
-    -Bmac.CFBundleIdentifier=io.bisq \
+    -Bmac.CFBundleIdentifier=bisq \
     -Bmac.CFBundleName=Bisq \
     -Bicon=package/osx/Bisq.icns \
     -Bruntime="$JAVA_HOME/jre" \
@@ -49,11 +41,9 @@ $JAVA_HOME/bin/javapackager \
     -name Bisq \
     -title Bisq \
     -vendor Bisq \
-    -outdir gui/deploy \
-    -srcfiles "gui/deploy/Bisq-$version.jar" \
-    -srcfiles "gui/target/lib/bcpg-jdk15on.jar" \
-    -srcfiles "gui/target/lib/bcprov-jdk15on.jar" \
-    -appclass io.bisq.gui.app.BisqAppMain \
+    -outdir deploy \
+    -srcfiles "deploy/Bisq-$version.jar" \
+    -appclass bisq.desktop.app.BisqAppMain \
     -outfile Bisq
 
 
@@ -65,12 +55,12 @@ $JAVA_HOME/bin/javapackager \
 #    -BjvmOptions=-Djava.security.policy=file:bisq.policy
 #     -srcfiles "core/src/main/resources/bisq.policy" \
 
-rm "gui/deploy/Bisq.html"
-rm "gui/deploy/Bisq.jnlp"
+rm "deploy/Bisq.html"
+rm "deploy/Bisq.jnlp"
 
-mv "gui/deploy/bundles/Bisq-$version.dmg" "gui/deploy/Bisq-$version.dmg"
-rm -r "gui/deploy/bundles"
+mv "deploy/bundles/Bisq-$version.dmg" "deploy/Bisq-$version.dmg"
+rm -r "deploy/bundles"
 
-open gui/deploy
+open deploy
 
 cd package/osx

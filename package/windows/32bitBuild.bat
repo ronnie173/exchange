@@ -5,7 +5,7 @@
 :: 32 bit build
 :: Needs Inno Setup 5 or later (http://www.jrsoftware.org/isdl.php)
 
-SET version=0.6.4
+SET version=0.6.7
 
 :: Private setup
 SET outdir=\\VBOXSVR\vm_shared_windows_32bit
@@ -19,7 +19,7 @@ call "%JAVA_HOME%\bin\javapackager.exe" -deploy ^
 -title Bisq ^
 -vendor Bisq ^
 -outdir %outdir% ^
--appclass io.bisq.gui.app.BisqAppMain ^
+-appclass bisq.desktop.app.BisqAppMain ^
 -srcfiles %outdir%\Bisq.jar ^
 -srcfiles %outdir%\bcpg-jdk15on.jar ^
 -srcfiles %outdir%\bcprov-jdk15on.jar ^

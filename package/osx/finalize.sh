@@ -1,9 +1,9 @@
 #!/bin/bash
 
-version="0.6.4"
+version="0.6.7"
 
 target_dir="/Users/dev/Documents/__bisq/_releases/$version"
-src_dir="/Users/dev/Documents/intellij/exchange_bisq"
+src_dir="/Users/dev/idea/exchange"
 
 rm -r $target_dir
 
@@ -12,22 +12,17 @@ mkdir -p $target_dir
 # new signing key
 #cp "$target_dir/../7D20BB32.asc" "$target_dir/"
 
-
-
-
 # sig key mkarrer
 cp "$target_dir/../F379A1C6.asc" "$target_dir/"
 # sig key cbeams
 cp "$target_dir/../5BC5ED73.asc" "$target_dir/"
+# sig key Christoph Atteneder
+cp "$target_dir/../29CDFD3B.asc" "$target_dir/"
 # signing key
 cp "$target_dir/../signingkey.asc" "$target_dir/"
 
 mac="Bisq-$version.dmg"
-cp "$src_dir/gui/deploy/$mac" "$target_dir/"
-
-cp "$src_dir/seednode/target/SeedNode.jar" "$target_dir/SeedNode.jar"
-cp "$src_dir/provider/target/provider.jar" "$target_dir/provider.jar"
-cp "$src_dir/statistics/target/Statistics.jar" "$target_dir/Statistics.jar"
+cp "$src_dir/deploy/$mac" "$target_dir/"
 
 deb32="Bisq-32bit-$version.deb"
 cp "/Users/dev/vm_shared_ubuntu14_32bit/$deb32" "$target_dir/"
@@ -47,7 +42,7 @@ win32="Bisq-32bit-$version.exe"
 cp "/Users/dev/vm_shared_windows_32bit/bundles/$exe" "$target_dir/$win32"
 win64="Bisq-64bit-$version.exe"
 cp "/Users/dev/vm_shared_windows/bundles/$exe" "$target_dir/$win64"
-cp "/Users/dev/vm_shared_windows/bundles/$exe" "/Users/dev/vm_shared_win10/$win64"
+#cp "/Users/dev/vm_shared_windows/bundles/$exe" "/Users/dev/vm_shared_win10/$win64"
 
 cd "$target_dir"
 
